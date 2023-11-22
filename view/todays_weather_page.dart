@@ -68,55 +68,102 @@ class TodaysWeatherPage extends ConsumerWidget {
 
   // コーデ提案ボード
   Widget coordinateBorad({required WeatherVariable wb}) {
+    PageController controller = PageController();
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 2.0),
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       color: Colors.white,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const Text('今日の服装（レディース）'),
-              TextButton(
-                onPressed: () {
-                  debugPrint('メンズボタンが押されました');
-                },
-                child: const Text('メンズはこちら'),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 350,
-            child: PageView(
+      child: SizedBox(
+        height: 600,
+        child: PageView(
+          controller: controller,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            Column(
               children: [
-                SizedBox(
-                  height: 350,
-                  child: ListView(
-                    children: [
-                      coordinate(wb: wb),
-                    ],
+                const Text('今日の服装（レディース）'),
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => controller.animateToPage(1,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.ease),
+                    child: const Text('メンズはこちら'),
                   ),
                 ),
                 SizedBox(
-                  height: 350,
-                  child: ListView(
+                  height: 500,
+                  child: PageView(
                     children: [
-                      coordinate(wb: wb),
+                      SizedBox(
+                        height: 350,
+                        child: ListView(
+                          children: [
+                            coordinate(gender: 'radies', wb: wb),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 350,
+                        child: ListView(
+                          children: [
+                            coordinate(gender: 'radies', wb: wb),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+            Column(
+              children: [
+                const Text('今日の服装（メンズ）'),
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => controller.animateToPage(0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.ease),
+                    child: const Text('レディースはこちら'),
+                  ),
+                ),
+                SizedBox(
+                  height: 500,
+                  child: PageView(
+                    children: [
+                      SizedBox(
+                        height: 350,
+                        child: ListView(
+                          children: [
+                            coordinate(gender: 'mens', wb: wb),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 350,
+                        child: ListView(
+                          children: [
+                            coordinate(gender: 'mens', wb: wb),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
   // コーデ提案ボードの写真と説明文
-  Widget coordinate({required WeatherVariable wb}) {
+  Widget coordinate({required String gender, required WeatherVariable wb}) {
     return Column(
-      children: radiesCoordinates[wb.hukusoSisu]!
+      children: coordinateData[gender]![wb.hukusoSisu]!
           .map(
             (CoordinateVariable cv) => Container(
               margin: const EdgeInsets.symmetric(vertical: 2.0),
